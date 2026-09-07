@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# TutorialForAcorn
-=======
 # ACORN School: Python and Tensors
 
 This repository is a beginner-friendly companion to
