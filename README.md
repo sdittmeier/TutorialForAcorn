@@ -1,4 +1,4 @@
-# ACORN School: Python and Tensors
+# ACORN School: From Python to Your First Model
 
 This repository is a beginner-friendly companion to
 [ACORN](https://github.com/GNN4ITkTeam/CommonFramework), the GNN4ITk common
@@ -8,20 +8,24 @@ you need before reading an ACORN edge-classification model.
 ## Start here
 
 You need Git and a Conda-compatible package manager (Conda, Mamba, or
-Micromamba). No GPU, CERN account, external dataset, or full ACORN installation
-is required.
+Micromamba). No GPU, CERN account, or external dataset is required. Clone with
+submodules so tutorials 02 and 03 can use the pinned ACORN source tree.
 
 ```bash
+git clone --recurse-submodules <this-repository-url>
+cd TutorialForAcorn
 conda env create -f environment.yml
 conda activate acorn-tutorial
 jupyter lab
 ```
 
-Start with `notebooks/00_python_and_tensors.ipynb`, then continue with
-`notebooks/01_one_acorn_event.ipynb`. Work from top to bottom and fill the six
-cells marked **Exercise** in each notebook. Every exercise has a small assertion
-that confirms your answer. If you get stuck, compare your work with the matching
-notebook in `notebooks/solutions/`.
+If you already cloned the repository, initialize ACORN with
+`git submodule update --init --recursive` before creating the environment.
+
+Work through the numbered notebooks in order. Fill the six cells marked
+**Exercise** in each notebook; every exercise has a small assertion that confirms
+your answer. If you get stuck, compare your work with the matching notebook in
+`notebooks/solutions/`.
 
 Expected completion time: **45–60 minutes per notebook**.
 
@@ -66,13 +70,14 @@ The tutorial was designed against ACORN `dev` commit
 by name, `torch.stack`, unpacking `edge_index`, and concatenating endpoint
 features.
 
-Installing the full ACORN dependency stack is intentionally deferred until the
-pipeline tutorial, where the package is actually used. This keeps the first
-experience small and reliable while retaining a precise upstream reference.
+The first two tutorials use only PyTorch and PyG. Tutorials 02 and 03 use the
+pinned ACORN submodule and its real command-line, stage, checkpoint, and model
+registration behavior. Their examples remain CPU-only and operate exclusively
+on the bundled toy events.
 
 ## Planned learning path
 
 1. `00_python_and_tensors.ipynb` — Python survival kit
 2. `01_one_acorn_event.ipynb` — hits, tracks, tensors, and graphs (available)
-3. `02_run_the_toy_pipeline.ipynb` — stages, YAML, training, inference, and evaluation
-4. `03_create_an_edge_classifier.ipynb` — implement and register `TinyEdgeMLP`
+3. `02_run_the_toy_pipeline.ipynb` — stages, YAML, training, inference, and evaluation (available)
+4. `03_create_an_edge_classifier.ipynb` — implement and register `TinyEdgeMLP` (available)

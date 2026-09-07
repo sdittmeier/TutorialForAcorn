@@ -9,7 +9,34 @@ dependencies:
   - cpuonly
   - pyg=2.6
   - matplotlib
+  - lightning=2.4
+  - pyyaml
+  - click
+  - tqdm
+  - networkx
+  - seaborn
+  - numpy<2
+  - pandas
+  - scipy
+  - scikit-learn
+  - numba
+  - polars
+  - pyarrow
+  - uproot<=5.3.1
   - jupyterlab=4
   - nbclient
   - nbformat
   - pytest
+  - pip
+  - pip:
+      - atlasify
+      - class-resolver
+      - onnxruntime
+      - onnx
+      - onnxoptimizer
+      - brevitas
+      - qonnx
+      - MonkeyType
+      - wandb
+      - trackml @ https://github.com/LAL/trackml-library/tarball/master
+      - -e ./vendor/acorn

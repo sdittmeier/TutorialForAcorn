@@ -1,0 +1,18 @@
+stage: edge_classifier
+model: InteractionGNN
+input_dir: TUTORIAL_INPUT_DIR
+stage_dir: TUTORIAL_STAGE_DIR
+project: acorn-school-toy-gnn
+accelerator: cpu
+devices: 1
+nodes: 1
+data_split: [0, 2, 0]
+variable_with_prefix: true
+
+score_cut: 0.5
+target_tracks:
+  track_particle_pt: [1000.0, .inf]
+  track_particle_nhits: [3, .inf]
+plots:
+  graph_roc_curve:
+    title: Tiny InteractionGNN ROC curve

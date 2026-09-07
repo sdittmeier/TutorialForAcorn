@@ -1,0 +1,3 @@
+[submodule "vendor/acorn"]
+	path = vendor/acorn
+	url = https://github.com/GNN4ITkTeam/CommonFramework.git

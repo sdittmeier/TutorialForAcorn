@@ -1,4 +1,5 @@
 from pathlib import Path
+import subprocess
 
 import nbformat
 from nbclient import NotebookClient
@@ -13,6 +14,14 @@ NOTEBOOK_PAIRS = [
     (
         ROOT / "notebooks" / "01_one_acorn_event.ipynb",
         ROOT / "notebooks" / "solutions" / "01_one_acorn_event_solution.ipynb",
+    ),
+    (
+        ROOT / "notebooks" / "02_run_the_toy_pipeline.ipynb",
+        ROOT / "notebooks" / "solutions" / "02_run_the_toy_pipeline_solution.ipynb",
+    ),
+    (
+        ROOT / "notebooks" / "03_create_an_edge_classifier.ipynb",
+        ROOT / "notebooks" / "solutions" / "03_create_an_edge_classifier_solution.ipynb",
     ),
 ]
 
@@ -78,7 +87,7 @@ def test_solution_executes_from_top_to_bottom_on_cpu():
         notebook = load_notebook(solution_path)
         executed = NotebookClient(
             notebook,
-            timeout=120,
+            timeout=300,
             kernel_name="python3",
             resources={"metadata": {"path": str(ROOT)}},
         ).execute()
@@ -107,3 +116,48 @@ def test_one_event_solution_has_expected_data_contract():
     assert int(event.edge_y.sum()) == 5
     assert namespace["graph_efficiency"] == 5 / 6
     assert namespace["graph_purity"] == 5 / 12
+
+
+def test_bundled_pipeline_data_has_expected_contract():
+    import torch
+
+    data_root = ROOT / "tutorial_data" / "edge_classifier"
+    expected_counts = {"trainset": 8, "valset": 2, "testset": 2}
+    required = {
+        "hit_x",
+        "hit_r",
+        "hit_phi",
+        "hit_z",
+        "edge_index",
+        "edge_y",
+        "track_edges",
+        "track_to_edge_map",
+        "event_id",
+        "config",
+    }
+    for split, count in expected_counts.items():
+        paths = sorted((data_root / split).glob("*.pyg"))
+        assert len(paths) == count
+        for path in paths:
+            event = torch.load(path, map_location="cpu", weights_only=False)
+            assert required <= set(event.keys())
+            assert event.edge_index.shape[0] == 2
+            assert event.edge_y.shape == (event.edge_index.shape[1],)
+            assert event.track_to_edge_map.shape == (event.track_edges.shape[1],)
+            assert event.edge_index.max() < event.num_nodes
+
+
+def test_acorn_submodule_is_pinned_and_clean_after_notebook_execution():
+    acorn_root = ROOT / "vendor" / "acorn"
+    assert (acorn_root / ".git").exists(), "Run: git submodule update --init --recursive"
+    assert (acorn_root / "acorn" / "core").is_dir()
+    revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=acorn_root, text=True,
+        capture_output=True, check=True,
+    ).stdout.strip()
+    status = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=acorn_root, text=True,
+        capture_output=True, check=True,
+    ).stdout
+    assert revision == "f8b8787e269e0ba504d1bf0a555806b7f69d04e2"
+    assert status == ""

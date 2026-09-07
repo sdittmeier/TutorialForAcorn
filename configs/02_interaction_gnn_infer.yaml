@@ -1,0 +1,12 @@
+stage: edge_classifier
+model: InteractionGNN
+input_dir: TUTORIAL_INPUT_DIR
+stage_dir: TUTORIAL_STAGE_DIR
+project: acorn-school-toy-gnn
+accelerator: cpu
+devices: 1
+nodes: 1
+log_wandb: false
+num_workers: [0, 0, 0]
+data_split: [8, 2, 2]
+variable_with_prefix: true

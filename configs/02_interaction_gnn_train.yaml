@@ -1,0 +1,35 @@
+stage: edge_classifier
+model: InteractionGNN
+input_dir: TUTORIAL_INPUT_DIR
+stage_dir: TUTORIAL_STAGE_DIR
+project: acorn-school-toy-gnn
+accelerator: cpu
+devices: 1
+nodes: 1
+log_wandb: false
+num_workers: [0, 0, 0]
+data_split: [8, 2, 2]
+variable_with_prefix: true
+
+edge_cut: 0.5
+undirected: false
+undirected_message_passing: false
+node_features: [hit_r, hit_phi, hit_z]
+node_scales: [4.0, 1.0, 4.0]
+hidden: 16
+n_graph_iters: 1
+nb_node_layer: 1
+nb_edge_layer: 1
+layernorm: false
+batchnorm: false
+aggregation: sum
+hidden_activation: ReLU
+output_activation: ReLU
+
+warmup: 0
+ratio: 0
+scheduler: StepLR
+lr: 0.01
+factor: 0.8
+patience: 4
+max_epochs: 10
