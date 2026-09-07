@@ -5,8 +5,16 @@ from nbclient import NotebookClient
 
 
 ROOT = Path(__file__).resolve().parents[1]
-STUDENT = ROOT / "notebooks" / "00_python_and_tensors.ipynb"
-SOLUTION = ROOT / "notebooks" / "solutions" / "00_python_and_tensors_solution.ipynb"
+NOTEBOOK_PAIRS = [
+    (
+        ROOT / "notebooks" / "00_python_and_tensors.ipynb",
+        ROOT / "notebooks" / "solutions" / "00_python_and_tensors_solution.ipynb",
+    ),
+    (
+        ROOT / "notebooks" / "01_one_acorn_event.ipynb",
+        ROOT / "notebooks" / "solutions" / "01_one_acorn_event_solution.ipynb",
+    ),
+]
 
 
 def load_notebook(path):
@@ -25,56 +33,77 @@ def source(notebook, cell_type=None):
 
 
 def test_student_and_solution_have_matching_structure():
-    student = load_notebook(STUDENT)
-    solution = load_notebook(SOLUTION)
+    for student_path, solution_path in NOTEBOOK_PAIRS:
+        student = load_notebook(student_path)
+        solution = load_notebook(solution_path)
 
-    assert cell_ids(student) == cell_ids(solution)
-    exercise_ids = [
-        cell["id"]
-        for cell in student.cells
-        if "exercise" in cell.get("metadata", {}).get("tags", [])
-    ]
-    assert exercise_ids == [f"exercise-{number}" for number in range(1, 7)]
+        assert cell_ids(student) == cell_ids(solution)
+        exercise_ids = [
+            cell["id"]
+            for cell in student.cells
+            if "exercise" in cell.get("metadata", {}).get("tags", [])
+        ]
+        assert exercise_ids == [f"exercise-{number}" for number in range(1, 7)]
 
-    student_headings = [
-        line
-        for line in source(student, "markdown").splitlines()
-        if line.startswith("## ")
-    ]
-    solution_headings = [
-        line
-        for line in source(solution, "markdown").splitlines()
-        if line.startswith("## ")
-    ]
-    assert student_headings == solution_headings
+        student_headings = [
+            line
+            for line in source(student, "markdown").splitlines()
+            if line.startswith("## ")
+        ]
+        solution_headings = [
+            line
+            for line in source(solution, "markdown").splitlines()
+            if line.startswith("## ")
+        ]
+        assert student_headings == solution_headings
 
 
 def test_todos_are_only_in_student_notebook():
-    assert "TODO" in source(load_notebook(STUDENT))
-    assert "TODO" not in source(load_notebook(SOLUTION))
+    for student_path, solution_path in NOTEBOOK_PAIRS:
+        assert "TODO" in source(load_notebook(student_path))
+        assert "TODO" not in source(load_notebook(solution_path))
 
 
 def test_notebooks_have_no_runtime_network_gpu_or_absolute_home_dependency():
-    for path in (STUDENT, SOLUTION):
-        code = source(load_notebook(path), "code")
-        forbidden = ("!pip", "requests.", "urlopen(", ".cuda(", 'device="cuda"')
-        assert not any(item in code for item in forbidden)
-        assert "/home/" not in code
+    for pair in NOTEBOOK_PAIRS:
+        for path in pair:
+            code = source(load_notebook(path), "code")
+            forbidden = ("!pip", "requests.", "urlopen(", ".cuda(", 'device="cuda"')
+            assert not any(item in code for item in forbidden)
+            assert "/home/" not in code
 
 
 def test_solution_executes_from_top_to_bottom_on_cpu():
-    notebook = load_notebook(SOLUTION)
-    executed = NotebookClient(
-        notebook,
-        timeout=120,
-        kernel_name="python3",
-        resources={"metadata": {"path": str(ROOT)}},
-    ).execute()
+    for _, solution_path in NOTEBOOK_PAIRS:
+        notebook = load_notebook(solution_path)
+        executed = NotebookClient(
+            notebook,
+            timeout=120,
+            kernel_name="python3",
+            resources={"metadata": {"path": str(ROOT)}},
+        ).execute()
 
-    assert all(
-        output.get("output_type") != "error"
-        for cell in executed.cells
-        if cell.cell_type == "code"
-        for output in cell.get("outputs", [])
-    )
+        assert all(
+            output.get("output_type") != "error"
+            for cell in executed.cells
+            if cell.cell_type == "code"
+            for output in cell.get("outputs", [])
+        )
 
+
+def test_one_event_solution_has_expected_data_contract():
+    notebook = load_notebook(NOTEBOOK_PAIRS[1][1])
+    namespace = {}
+    for cell in notebook.cells:
+        if cell.cell_type == "code":
+            exec(compile(cell.source, str(NOTEBOOK_PAIRS[1][1]), "exec"), namespace)
+
+    event = namespace["event"]
+    assert event.num_nodes == 8
+    assert event.r.shape == event.phi.shape == event.z.shape == (8,)
+    assert event.particle_id.shape == (8,)
+    assert event.edge_index.shape == (2, 12)
+    assert event.edge_y.shape == event.edge_scores.shape == (12,)
+    assert int(event.edge_y.sum()) == 5
+    assert namespace["graph_efficiency"] == 5 / 6
+    assert namespace["graph_purity"] == 5 / 12

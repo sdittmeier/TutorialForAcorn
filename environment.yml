@@ -1,13 +1,15 @@
 name: acorn-tutorial
 channels:
+  - pyg
   - pytorch
   - conda-forge
 dependencies:
   - python=3.10
   - pytorch=2.4.0
   - cpuonly
+  - pyg=2.6
+  - matplotlib
   - jupyterlab=4
   - nbclient
   - nbformat
   - pytest
-

@@ -17,12 +17,13 @@ conda activate acorn-tutorial
 jupyter lab
 ```
 
-Open `notebooks/00_python_and_tensors.ipynb`. Work from top to bottom and fill
-the six cells marked **Exercise**. Each exercise has a small assertion that
-confirms your answer. If you get stuck, compare your work with
-`notebooks/solutions/00_python_and_tensors_solution.ipynb`.
+Start with `notebooks/00_python_and_tensors.ipynb`, then continue with
+`notebooks/01_one_acorn_event.ipynb`. Work from top to bottom and fill the six
+cells marked **Exercise** in each notebook. Every exercise has a small assertion
+that confirms your answer. If you get stuck, compare your work with the matching
+notebook in `notebooks/solutions/`.
 
-Expected completion time: **45–60 minutes**.
+Expected completion time: **45–60 minutes per notebook**.
 
 ## What you will learn
 
@@ -35,13 +36,18 @@ By the end of the tutorial you should be able to:
 - read a Python traceback from the final line upward; and
 - follow the data flow through the first lines of an ACORN edge classifier.
 
-The examples deliberately use tracking names such as `r`, `phi`, `z`,
-`node_features`, and `edge_index`. The physics and graph-data contract are
-introduced in the next tutorial rather than assumed here.
+The second tutorial then gives those tensors physical meaning. You will build a
+real PyTorch Geometric `Data` event, distinguish node and edge attributes,
+visualize true and fake candidate edges, and calculate graph efficiency and
+purity.
+
+The examples deliberately reuse tracking names such as `r`, `phi`, `z`,
+`node_features`, and `edge_index` across both tutorials, so the Python concepts
+connect directly to the graph-data contract.
 
 ## Test the tutorial
 
-The solution notebook is executable from beginning to end on CPU:
+Both solution notebooks are executable from beginning to end on CPU:
 
 ```bash
 python -m pytest
@@ -66,8 +72,7 @@ experience small and reliable while retaining a precise upstream reference.
 
 ## Planned learning path
 
-1. `00_python_and_tensors.ipynb` — Python survival kit (this pilot)
-2. `01_one_acorn_event.ipynb` — hits, tracks, tensors, and graphs
+1. `00_python_and_tensors.ipynb` — Python survival kit
+2. `01_one_acorn_event.ipynb` — hits, tracks, tensors, and graphs (available)
 3. `02_run_the_toy_pipeline.ipynb` — stages, YAML, training, inference, and evaluation
 4. `03_create_an_edge_classifier.ipynb` — implement and register `TinyEdgeMLP`
-
