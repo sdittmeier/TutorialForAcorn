@@ -71,7 +71,3 @@ experience small and reliable while retaining a precise upstream reference.
 3. `02_run_the_toy_pipeline.ipynb` — stages, YAML, training, inference, and evaluation
 4. `03_create_an_edge_classifier.ipynb` — implement and register `TinyEdgeMLP`
 
-<<<<<<< HEAD
->>>>>>> d8a2f47 (initial commit)
-=======
->>>>>>> d8a2f47 (initial commit)
