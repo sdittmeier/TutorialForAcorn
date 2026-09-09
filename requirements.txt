@@ -1,0 +1,23 @@
+torch-geometric==2.6.*
+lightning==2.4.*
+matplotlib
+pyyaml
+click
+tqdm
+networkx
+seaborn
+numpy<2
+pandas
+scipy
+scikit-learn
+numba
+polars
+pyarrow
+uproot<=5.3.1
+jupyterlab==4.*
+nbclient
+nbformat
+pytest
+atlasify
+class-resolver
+trackml @ https://github.com/LAL/trackml-library/tarball/master
