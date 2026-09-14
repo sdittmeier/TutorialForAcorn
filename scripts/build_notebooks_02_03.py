@@ -80,10 +80,20 @@ def pipeline_cells(solution):
         'checkpoint = None   # TODO: select the first checkpoint'
     )
     inference_answer = (
-        'scored_paths = sorted((STAGE_DIR / "testset").glob("*.pyg"))\n'
+        'scored_paths = sorted((STAGE_DIR / "valset").glob("*.pyg"))\n'
+        'produced_splits = sorted(path.name for path in STAGE_DIR.iterdir() if path.is_dir())\n'
+        'assert scored_paths, (\n'
+        '    f"No scored validation events found in {STAGE_DIR / \'valset\'}. "\n'
+        '    f"Produced directories: {produced_splits}"\n'
+        ')\n'
         'scored_event = torch.load(scored_paths[0], map_location="cpu", weights_only=False)'
         if solution
-        else 'scored_paths = None  # TODO: sorted .pyg files in STAGE_DIR / "testset"\n'
+        else 'scored_paths = None  # TODO: sorted .pyg files in STAGE_DIR / "valset"\n'
+        'produced_splits = sorted(path.name for path in STAGE_DIR.iterdir() if path.is_dir())\n'
+        'assert scored_paths, (\n'
+        '    f"No scored validation events found in {STAGE_DIR / \'valset\'}. "\n'
+        '    f"Produced directories: {produced_splits}"\n'
+        ')\n'
         'scored_event = None  # TODO: load the first scored event on CPU'
     )
     metric_answer = (
@@ -177,7 +187,7 @@ print("checkpoint:", checkpoint.name)
 print(history.dropna(subset=["val_loss"])[["epoch", "val_loss"]].tail())
 assert checkpoint.suffix == ".ckpt"
 assert "val_loss" in history.columns''', True),
-        md("infer-heading", "## 5. Inference writes scored events\n\nTraining changes parameters; inference keeps them fixed, calculates one probability per candidate edge, stores it as `edge_scores`, appends the stage configuration, and writes new `.pyg` files under `stage_dir`."),
+        md("infer-heading", "## 5. Inference writes scored events\n\nTraining changes parameters; inference keeps them fixed, calculates one probability per candidate edge, stores it as `edge_scores`, appends the stage configuration, and writes new `.pyg` files under `stage_dir`. This tutorial intentionally infers only the two validation events because the next `acorn eval` command evaluates `valset`."),
         code("exercise-5", '''infer_config = yaml.safe_load((ROOT / "configs" / "02_interaction_gnn_infer.yaml").read_text())
 infer_config["input_dir"] = str(DATA)
 infer_config["stage_dir"] = str(STAGE_DIR)

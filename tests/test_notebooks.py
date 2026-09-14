@@ -3,6 +3,7 @@ import subprocess
 
 import nbformat
 from nbclient import NotebookClient
+import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -161,3 +162,19 @@ def test_acorn_submodule_is_pinned_and_clean_after_notebook_execution():
     ).stdout
     assert revision == "f8b8787e269e0ba504d1bf0a555806b7f69d04e2"
     assert status == ""
+
+
+def test_pipeline_inference_targets_validation_and_checks_output():
+    infer_config = yaml.safe_load(
+        (ROOT / "configs" / "02_interaction_gnn_infer.yaml").read_text()
+    )
+    assert infer_config["data_split"] == [0, 2, 0]
+
+    student = load_notebook(NOTEBOOK_PAIRS[2][0])
+    solution = load_notebook(NOTEBOOK_PAIRS[2][1])
+    for notebook in (student, solution):
+        exercise = next(cell for cell in notebook.cells if cell["id"] == "exercise-5")
+        assert 'STAGE_DIR / "valset"' in exercise.source
+        assert 'STAGE_DIR / "testset"' not in exercise.source
+        assert "No scored validation events found" in exercise.source
+        assert "Produced directories" in exercise.source

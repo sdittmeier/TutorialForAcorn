@@ -8,5 +8,5 @@ devices: 1
 nodes: 1
 log_wandb: false
 num_workers: [0, 0, 0]
-data_split: [8, 2, 2]
+data_split: [0, 2, 0]
 variable_with_prefix: true
