@@ -137,6 +137,7 @@ STAGE_DIR = RUNTIME / "interaction_gnn"
 ACORN_ENV = os.environ.copy()
 ACORN_ENV["PYTHONPATH"] = str(ROOT / "vendor" / "acorn") + os.pathsep + ACORN_ENV.get("PYTHONPATH", "")
 ACORN_ENV["MPLCONFIGDIR"] = str(RUNTIME / "matplotlib")
+ACORN_ENV["ACORN_SAVE_PYG_UNCOMPRESSED"] = "1"
 
 def run_acorn(operation, config_path):
     command = [sys.executable, "-m", "acorn.core.entrypoint_stage", operation, str(config_path)]
@@ -318,6 +319,7 @@ init_path.write_text(init_path.read_text() + registration)
 
 scratch_env = os.environ.copy()
 scratch_env["PYTHONPATH"] = str(ACORN_COPY) + os.pathsep + scratch_env.get("PYTHONPATH", "")
+scratch_env["ACORN_SAVE_PYG_UNCOMPRESSED"] = "1"
 check = subprocess.run(
     [sys.executable, "-c", "from acorn.core.core_utils import str_to_class; print(str_to_class('edge_classifier', 'TinyEdgeMLP').__name__)"],
     env=scratch_env, cwd=ROOT, text=True, capture_output=True, timeout=60, check=True,

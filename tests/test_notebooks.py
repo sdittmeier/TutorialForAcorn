@@ -173,6 +173,8 @@ def test_pipeline_inference_targets_validation_and_checks_output():
     student = load_notebook(NOTEBOOK_PAIRS[2][0])
     solution = load_notebook(NOTEBOOK_PAIRS[2][1])
     for notebook in (student, solution):
+        setup = next(cell for cell in notebook.cells if cell["id"] == "setup")
+        assert 'ACORN_ENV["ACORN_SAVE_PYG_UNCOMPRESSED"] = "1"' in setup.source
         exercise = next(cell for cell in notebook.cells if cell["id"] == "exercise-5")
         assert 'STAGE_DIR / "valset"' in exercise.source
         assert 'STAGE_DIR / "testset"' not in exercise.source
